@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+  <link href="./styles.css" rel="stylesheet">
+  <link href="./video-js.css" rel="stylesheet">
+  <link href="./vapor.css" rel="stylesheet">
+</head>
+
+<body>
+  <div>
+    <div class="grid">
+      <div id="channel_list">
+        <div class="channel_list-section">
+          <div class="channel_list-heading">
+            <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search...">
+          </div>
+          <div class="channel_list-heading-divider"></div>
+          <ul id="channel_list-elements" class="channel_list-elements">
+            <li class="channel_list-element"><a href="#">Project One</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- Create a video player -->
+    <video id="player" class="video-js vjs-vaporwave vjs-fill" controls></video>
+  </div>
+  <title>Tapes</title>
+  <!-- Include video.js library -->
+  <script src="./video.js"></script>
+  <!-- Include videojs-http-streaming library for HLS support -->
+  <script src="./videojs-http-streaming.js"></script>
+
+  <script>
+    function myFunction() {
+      // Declare variables
+      var input, filter, ul, li, a, i, txtValue;
+      input = document.getElementById('myInput');
+      filter = input.value.toUpperCase();
+      ul = document.getElementById("channel_list-elements"); // streams
+      li = ul.getElementsByTagName('li');
+
+      // Loop through all list items, and hide those who don't match the search query
+      for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("a")[0];
+        txtValue = a.textContent || a.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          li[i].style.display = "";
+        } else {
+          li[i].style.display = "none";
+        }
+      }
+    }
+
+  </script>
+
+  <script>
+    // Main player
+    let player = videojs('player', {
+      playsinline: true,
+      autoplay: true,
+      controls: true,
+      // fluid: true,
+      // aspectRatio: '16:9',
+      responsive: true,
+      // fluid: true,
+      fill: true,
+      playbackRates: [0.5, 1, 1.5, 2],
+      // poster: './icons/png/1024x1024.png'
+    });
+
+    var fullscreen = player.controlBar.getChild("FullscreenToggle")
+    var index = player.controlBar.children().indexOf(fullscreen)
+
+    var myButton = player.controlBar.addChild("button", {}, index);
+    // There are many functions available for button component 
+    // like below mentioned in this docs 
+    // https://docs.videojs.com/button. 
+    // You can set attributes and clasess as well.
+
+    // Getting html DOM
+    var myButtonDom = myButton.el();
+    // Since now you have the html dom element 
+    // you can add click events
+
+    // Now I am setting the text as you needed.
+    myButtonDom.innerHTML = "<span class='eject-emoji'>&#9167;</span>";
+
+    // Adding a click event function
+    myButtonDom.onclick = function () {
+      TogglePortfolio()
+    }
+
+    // window.api.receive("fromMain", (data) => {
+    //     console.log(`Received ${data} from main process`);
+    // });
+
+    // Check for the File API support
+    if (window.File && window.FileReader && window.FileList && window.Blob) {
+      // Great success! All the File APIs are supported.
+
+      function browseForDirectory() {
+        // Create a file input element
+        var fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.webkitdirectory = true;
+        fileInput.multiple = false;
+
+        // Listen for change events on the file input
+        fileInput.addEventListener('change', function () {
+          // Load the selected directory
+          loadDirectory(fileInput.files);
+        });
+
+        // Click the file input to open the directory picker
+        fileInput.click();
+      }
+
+      function selectStream(url) {
+        player.src({
+          src: url,
+          type: 'application/x-mpegURL'
+        });
+
+        // Play the selected stream
+        player.play();
+      }
+    } else {
+      // Sorry! No File API support.
+      console.error('The File APIs are not fully supported in this browser.');
+    }
+
+    // window.api.receive("fromMain", (data) => {
+    //   console.log(`Received ${data} from main process`);
+    // });
+
+    // window.api.send("toMain", "some data");
+
+    // setTimeout(() => {
+    //   document.getElementById('streams').classList.add('hide');
+    // }, 15000);
+
+  </script>
+
+  <script>
+    var portfolio = document.querySelector("#channel_list");
+    var content = document.querySelector(".landing");
+    var portfolioOpen = true;
+
+    TogglePortfolio();
+
+    function TogglePortfolio() {
+      if (portfolioOpen == true) {
+        ClosePortfolio();
+      } else if (portfolioOpen == false) {
+        OpenPortfolio();
+      }
+    }
+
+    function OpenPortfolio() {
+      portfolioOpen = true;
+      portfolio.style.marginLeft = "0";
+    }
+
+    function ClosePortfolio() {
+      portfolioOpen = false;
+      portfolio.style.marginLeft = "-350px";
+    }
+  </script>
+
+  <script src="./renderer.js"></script>
+</body>
+
+</html>

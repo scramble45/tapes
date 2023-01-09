@@ -1,0 +1,52 @@
+/* Vaporwave theme for video.js player */
+.vjs-vaporwave {
+  /* Set the background color to a neon pink-purple gradient */
+  /* background: linear-gradient(to right, #ff0080, #8000ff); */
+  /* Add a neon glow around the player */
+  box-shadow: 0 0 20px #ff0080;
+}
+
+/* Style the control bar */
+.vjs-vaporwave .vjs-control-bar {
+  /* Set the background to a translucent black */
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Center the control elements */
+  display: flex;
+  justify-content: center;
+  /* Use neon pink and purple for the control icons */
+  color: #ff0080;
+}
+
+/* Style the play button */
+.vjs-vaporwave .vjs-play-control {
+  /* Add a neon pink border and purple background on hover */
+  border: 2px solid #ff0080;
+  background-color: #8000ff;
+}
+
+/* Style the progress bar */
+.vjs-vaporwave .vjs-progress-control {
+  /* Use a neon pink and purple gradient for the progress bar fill */
+  background: linear-gradient(to right, #ff0080, #8000ff);
+}
+
+/* Style the volume control */
+.vjs-vaporwave .vjs-volume-control {
+  /* Use neon pink and purple for the volume icons */
+  color: #ff0080;
+}
+
+/* Style the fullscreen button */
+.vjs-vaporwave .vjs-fullscreen-control {
+  /* Add a neon pink border and purple background on hover */
+  border: 2px solid #ff0080;
+  background-color: #8000ff;
+}
+
+.vjs-vaporwave .vjs-big-play-button {
+  visibility: hidden;
+}
+
+/* .vjs-vaporwave .vjs-poster {
+
+} */

@@ -1,0 +1,87 @@
+{
+  "name": "tapes_iptv",
+  "version": "1.0.0",
+  "description": "a simple but elegant iptv client",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "make:win": "electron-forge make --arch=x64 --platform=win32 -d",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\""
+  },
+  "keywords": [
+    "iptv"
+  ],
+  "author": "Rowan Hamilton",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "electron-squirrel-startup": "^1.0.0"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.4",
+    "@electron-forge/maker-deb": "^6.0.4",
+    "@electron-forge/maker-flatpak": "^6.0.4",
+    "@electron-forge/maker-rpm": "^6.0.4",
+    "@electron-forge/maker-squirrel": "^6.0.4",
+    "@electron-forge/maker-zip": "^6.0.4",
+    "electron": "22.0.0",
+    "electron-icon-maker": "^0.0.5"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "icon": "./src/icons/png/64x64.png"
+      },
+      "make_targets": {
+        "win32": [
+          "squirrel"
+        ],
+        "linux": [
+          "flatpak"
+        ]
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-flatpak",
+          "config": {
+            "options": {
+              "categories": [
+                "Utility"
+              ],
+              "icon": {
+                "512x512": "./src/icons/png/512x512.png"
+              }
+            },
+            "modules": [
+              {
+                "name": "zypak",
+                "sources": [
+                  {
+                    "type": "git",
+                    "url": "https://github.com/refi64/zypak",
+                    "tag": "v2022.03"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "linux",
+            "win"
+          ],
+          "config": {}
+        }
+      ]
+    }
+  }
+}

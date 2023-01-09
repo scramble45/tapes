@@ -1,0 +1,178 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: black;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  background-color: rgb(255, 0, 179);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgb(11, 223, 212);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  grid-template-rows: 100%;
+  height: 100%;
+}
+
+.grid>div {
+  background-color: #000000eb;
+  color: white;
+}
+
+/* #streams {
+  overflow-y: scroll;
+  padding-top: 2em;
+} */
+
+/* #streams {
+  overflow-y: scroll;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 286px;
+} */
+
+/* #streams {
+  scrollbar-color: rgb(255, 0, 179) rgb(11, 223, 212);
+  top: 0;
+  left: 0;
+  z-index: 1;
+  overflow-y: scroll;
+} */
+
+#player {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  /* other styles */
+}
+
+.container {
+  width: 100%;
+  height: 100vh;
+}
+
+.video-js {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#myInput {
+  position: fixed;
+  top: 0;
+  z-index: 1;
+  /* background-image: url('./images/glass.png'); */
+  /* Add a search icon to input */
+  /* background-position: 10px 12px; */
+  /* Position the search icon */
+  /* background-repeat: no-repeat; */
+  /* Do not repeat the icon image */
+  background-color: #000000eb;
+  color: #0fccc3eb;
+  width: 330px;
+  /* Full-width */
+  font-size: 18px;
+  /* Increase font-size */
+  /* padding: 12px 20px 12px 40px; */
+  /* padding: 4px; */
+  /* Add some padding */
+  /* border: 1px solid #ddd; */
+  border: 1px solid #0fccc3eb;
+  /* Add a grey border */
+  /* margin-bottom: 12px; */
+  /* Add some space below the input */
+}
+
+#channel_list {
+  width: 350px;
+  height: 96%;
+  margin-left: 0;
+  position: fixed;
+  float: left;
+  color: white;
+  background: linear-gradient(45deg, #49a09d96, #5f2c8294);
+
+  transition: all 0.75s;
+  z-index: 1;
+  overflow-y: scroll;
+}
+
+.channel_list-section {
+  margin-bottom: 50px;
+}
+
+.channel_list-heading-divider {
+  padding-bottom: 25px;
+}
+
+.channel_list-elements {
+  list-style-type: none;
+  margin: 0;
+  /* padding: 0; */
+  padding-left: 3px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  /* Apply the vaporwave style */
+  color: #fff;
+  font-size: 1.5em;
+  /* text-shadow: 0 0 5px #ff0094, 0 0 10px #ff0094, 0 0 15px #ff0094, 0 0 20px #ff0094, 0 0 25px #ff0094, 0 0 30px #ff0094, 0 0 35px #ff0094; */
+}
+
+a {
+  text-decoration: none;
+  color: white;
+  font-size: 15px;
+}
+
+.channel_list-element {
+  margin: 18px 0 0 15px;
+  font-size: 15px;
+  font-weight: 100;
+}
+
+nav {
+  z-index: 1;
+  float: left;
+}
+
+.channel_list-element {
+  margin: 12px 40px 0 0;
+  float: left;
+  color: black;
+  font-size: 18px;
+  text-decoration: none;
+}
+
+.navigation-icon {
+  margin: 11px 0 0 10px;
+  font-size: 25px;
+  color: white;
+  transition: all 0.75s;
+  float: left;
+}
+
+.navigation-icon-expanded {
+  margin: 11px 0 0 360px;
+}
+
+#navigation-icon:hover {
+  cursor: pointer;
+}
+
+.eject-emoji {
+  cursor: pointer;
+  font-size: 18px;
+}
