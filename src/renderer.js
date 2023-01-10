@@ -48,7 +48,8 @@ function loadDirectory(fileData) {
         streams.forEach(function (stream, index) {
             var listItem = document.createElement('li');
             listItem.className = "channel_list-element"
-            listItem.innerHTML = '<a href="#" onclick="selectStream(\'' + stream.url + '\')">' + `${index} : ${stream.title}` + '</a>';
+            // listItem.innerHTML = '<a href="#" onclick="selectStream(\'' + stream.url + '\')">' + `${index} : ${stream.title}` + '</a>';
+            listItem.innerHTML = '<a href="#" onclick="selectStream(\'' + stream.url + '\', \'' + stream.title + '\')">' + `${index} : ${stream.title}` + '</a>';
             streamsList.appendChild(listItem);
         });
     };

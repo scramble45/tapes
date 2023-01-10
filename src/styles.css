@@ -68,7 +68,7 @@ body {
 
 .grid>div {
   background-color: #000000eb;
-  color: white;
+  /* color: white; */
 }
 
 /* #streams {
@@ -223,4 +223,21 @@ nav {
 
 .highlighted {
   background-color: #00ff4c75;
+}
+
+
+@font-face {
+  font-family: VCR;
+  src: url(./fonts/VCR_OSD_MONO_1.001.ttf);
+}
+
+.overlay {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+  font-family: VCR;
+  color: #33f048;
+  font-size: 30px;
+  /* other styles go here */
 }

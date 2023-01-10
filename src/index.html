@@ -12,6 +12,13 @@
 <body>
   <div>
     <div class="grid">
+
+      <!-- Add the overlay element to the page -->
+      <div id="overlay" class="overlay" style="display: none;">
+        <!-- Add the title element to the overlay -->
+        <div id="overlay-title">safdasdfasdf</div>
+      </div>
+
       <div id="channel_list">
         <div class="channel_list-section">
           <div class="channel_list-heading">
@@ -68,6 +75,7 @@
       responsive: true,
       fill: true,
       playbackRates: [0.5, 1, 1.5, 2],
+      autoHideMenuBar: true,
       // poster: './icons/png/1024x1024.png'
     });
 
@@ -118,7 +126,24 @@
         fileInput.click();
       }
 
-      function selectStream(url) {
+      function selectStream(url, title) {
+
+
+        let truncatedTitle = title.substr(0, 15);
+        if (truncatedTitle.length < title.length) {
+          truncatedTitle += '...';
+        }
+
+
+        // Update the overlay title
+        document.getElementById("overlay-title").innerHTML = truncatedTitle;
+        // Show the overlay
+        document.getElementById("overlay").style.display = "block";
+        // Hide the overlay after x seconds
+        setTimeout(function () {
+          document.getElementById("overlay").style.display = "none";
+        }, 30000);
+
         player.src({
           src: url,
           type: 'application/x-mpegURL'
@@ -146,6 +171,9 @@
     if (navigator.getGamepads) {
       // Gamepad API is supported
 
+      // Start the gamepad loop
+      gamepadLoop();
+
       // Keep track of the currently selected channel
       let selectedIndex = 0;
 
@@ -156,7 +184,7 @@
       // Function to navigate up through the channel list
       function navigateUp() {
         // Deselect the current channel
-        li[selectedIndex]?.classList.remove('selected');
+        li[selectedIndex].classList.remove('selected');
 
         // Decrement the selected index
         selectedIndex--;
@@ -167,13 +195,13 @@
         }
 
         // Select the new channel
-        li[selectedIndex]?.classList.add('selected');
+        li[selectedIndex].classList.add('selected');
       }
 
       // Function to navigate down through the channel list
       function navigateDown() {
         // Deselect the current channel
-        li[selectedIndex]?.classList.remove('selected');
+        li[selectedIndex].classList.remove('selected');
 
         // Increment the selected index
         selectedIndex++;
@@ -202,6 +230,17 @@
         // Trigger a click event on the selected element
         if (currentIndex > -1) {
           let a = li[currentIndex].getElementsByTagName("a")[selectedIndex];
+
+
+          // Update the overlay title
+          document.getElementById("overlay-title").innerHTML = a.textContent;
+          // Show the overlay
+          document.getElementById("overlay").style.display = "block";
+          // Hide the overlay after x seconds
+          setTimeout(function () {
+            document.getElementById("overlay").style.display = "none";
+          }, 30000);
+
           // Trigger the click event on the link element
           a.click();
         }
@@ -215,7 +254,7 @@
         // Check if the gamepad is connected
         if (gamepad) {
           function highlightNextListItem() {
-          // Highlight the previous list item in the channel list
+            // Highlight the previous list item in the channel list
             // Get a reference to the channel list elements
             var listElements = document.getElementsByClassName("channel_list-element");
 
@@ -242,15 +281,10 @@
 
             // Scroll the list if necessary
             if (currentIndex > -1) {
-              console.log('got into here:')
               var element = listElements[currentIndex + 1];
-              console.log('got into here:', element)
-              var elementRect = element?.getBoundingClientRect();
-              console.log('got into here:', elementRect)
+              var elementRect = element.getBoundingClientRect();
               var absoluteElementTop = elementRect.top + window.pageYOffset;
-              console.log('got into here:', absoluteElementTop)
               var middle = absoluteElementTop - (window.innerHeight / 2);
-              console.log('got into here:', middle)
               var currentPositionOfPage = window.scrollY;
               document.getElementById("channel_list").scrollTo(0, middle)
             }
@@ -281,7 +315,6 @@
             }
             listElements[currentIndex].classList.add("highlighted");
 
-
             // Scroll the list if necessary
             if (currentIndex > -1) {
               var element = listElements[currentIndex - 1];
@@ -293,44 +326,44 @@
           }
 
           // Check for D-pad button presses
-          if (gamepad.buttons[12]?.pressed || gamepad.axes[1] < -0.5) { // Up
+          if (gamepad.buttons[12].pressed || gamepad.axes[1] < -0.5) { // Up
             console.log('testing up');
 
             highlightPreviousListItem();
           }
-          if (gamepad.buttons[13]?.pressed || gamepad.axes[1] > 0.5) { // Down
+          if (gamepad.buttons[13].pressed || gamepad.axes[1] > 0.5) { // Down
             console.log('testing down');
 
             highlightNextListItem();
           }
 
-          if (gamepad.buttons[14]?.pressed || gamepad.axes[0] < -0.5) { // Left
+          if (gamepad.buttons[14].pressed || gamepad.axes[0] < -0.5) { // Left
             // Do nothing
           }
-          if (gamepad.buttons[15]?.pressed || gamepad.axes[0] > 0.5) { // Right
+          if (gamepad.buttons[15].pressed || gamepad.axes[0] > 0.5) { // Right
             // Do nothing
           }
 
           // Check if the B button is pressed
-          if (gamepad.buttons[1]?.pressed) {
+          if (gamepad.buttons[1].pressed) {
             // B button is pressed, call the toggleMenu function
             toggleMenu();
           }
 
           // Check if the D-pad up button is pressed
-          if (gamepad.buttons[12]?.pressed) {
+          if (gamepad.buttons[12].pressed) {
             // D-pad up button is pressed, navigate up through the channel list
             navigateUp();
           }
 
           // Check if the D-pad down button is pressed
-          if (gamepad.buttons[13]?.pressed) {
+          if (gamepad.buttons[13].pressed) {
             // D-pad down button is pressed, navigate down through the channel list
             navigateDown();
           }
 
           // Check if the X button is pressed
-          if (gamepad.buttons[2]?.pressed) {
+          if (gamepad.buttons[2].pressed) {
             // X button is pressed, trigger the selected channel
             triggerSelected();
           }
@@ -339,8 +372,6 @@
         // Run the gamepad loop again after a short delay
         setTimeout(gamepadLoop, 150);
       }
-      // Start the gamepad loop
-      gamepadLoop();
     }
   </script>
 
