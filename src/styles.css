@@ -23,17 +23,22 @@ body {
 } */
 
 ::-webkit-scrollbar {
-  width: 12px;               /* width of the entire scrollbar */
+  width: 12px;
+  /* width of the entire scrollbar */
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(0, 255, 200, 0.267);        /* color of the tracking area */
+  background: rgba(0, 255, 200, 0.267);
+  /* color of the tracking area */
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgb(204, 0, 255);    /* color of the scroll thumb */
-  border-radius: 2px;       /* roundness of the scroll thumb */
-  border: 3px solid rgb(0, 255, 255);  /* creates padding around scroll thumb */
+  background-color: rgb(204, 0, 255);
+  /* color of the scroll thumb */
+  border-radius: 2px;
+  /* roundness of the scroll thumb */
+  border: 3px solid rgb(0, 255, 255);
+  /* creates padding around scroll thumb */
 }
 
 /* STYLING SCROLLBAR */
@@ -214,4 +219,8 @@ nav {
 .eject-emoji {
   cursor: pointer;
   font-size: 18px;
+}
+
+.highlighted {
+  background-color: #00ff4c75;
 }

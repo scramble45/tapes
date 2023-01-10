@@ -47,6 +47,7 @@ function loadDirectory(fileData) {
         // Create a list element for each stream
         streams.forEach(function (stream, index) {
             var listItem = document.createElement('li');
+            listItem.className = "channel_list-element"
             listItem.innerHTML = '<a href="#" onclick="selectStream(\'' + stream.url + '\')">' + `${index} : ${stream.title}` + '</a>';
             streamsList.appendChild(listItem);
         });
