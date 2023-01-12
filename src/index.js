@@ -27,6 +27,7 @@ function createWindow() {
     minWidth: 1275,
     minHeight: 740,
     icon: './src/icons/png/64x64.png',
+    autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: false, // is default value after Electron v5
       contextIsolation: true, // protect against prototype pollution

@@ -12,11 +12,10 @@
 <body>
   <div>
     <div class="grid">
-
       <!-- Add the overlay element to the page -->
       <div id="overlay" class="overlay" style="display: none;">
         <!-- Add the title element to the overlay -->
-        <div id="overlay-title"></div>
+        <div id="overlay-title" class="overlay-title"></div>
       </div>
 
       <div id="channel_list">
@@ -36,6 +35,7 @@
   </div>
   <title>Tapes</title>
   <!-- Include video.js library -->
+  <script src="./gamecontroller.js"></script>
   <script src="./video.js"></script>
   <!-- Include videojs-http-streaming library for HLS support -->
   <script src="./videojs-http-streaming.js"></script>
@@ -64,6 +64,16 @@
   </script>
 
   <script>
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen()
+      } else {
+        document.exitFullscreen()
+      }
+    }
+  </script>
+
+  <script>
     // Main player
     let player = videojs('player', {
       playsinline: true,
@@ -75,86 +85,86 @@
       responsive: true,
       fill: true,
       playbackRates: [0.5, 1, 1.5, 2],
-      autoHideMenuBar: true,
       // poster: './icons/png/1024x1024.png'
     });
 
-    var fullscreen = player.controlBar.getChild("FullscreenToggle")
-    var index = player.controlBar.children().indexOf(fullscreen)
+    player.controlBar.fullscreenToggle.dispose() // remove old fullscreen button
 
-    var myButton = player.controlBar.addChild("button", {}, index);
-    // There are many functions available for button component 
-    // like below mentioned in this docs 
-    // https://docs.videojs.com/button. 
-    // You can set attributes and clasess as well.
+    let fullscreen = player.controlBar.getChild("FullscreenToggle")
+    let index = player.controlBar.children().indexOf(fullscreen)
 
-    // Getting html DOM
-    var myButtonDom = myButton.el();
-    // Since now you have the html dom element 
-    // you can add click events
+    let ejectButton = player.controlBar.addChild("button", {}, index)
+    let fullscreenButton = player.controlBar.addChild("button", {}, index + 1)
 
-    // Now I am setting the text as you needed.
-    myButtonDom.innerHTML = "<span class='eject-emoji'>&#9167;</span>";
+    let ejectButtonDom = ejectButton.el();
+    let fullscreenButtonDom = fullscreenButton.el()
+
+    ejectButtonDom.innerHTML = "<span class='eject-emoji'>&#9167;</span>"
+    fullscreenButtonDom.innerHTML = "<button class='vjs-fullscreen-control vjs-control vjs-button' type='button' title='Fullscreen' aria-disabled='false'><span class='vjs-icon-placeholder' aria-hidden='true'></span><span class='vjs-control-text' aria-live='polite'>Fullscreen</span></button>"
 
     // Adding a click event function
-    myButtonDom.onclick = function () {
+    ejectButtonDom.onclick = function () {
       toggleMenu()
+    }
+
+    fullscreenButtonDom.onclick = function () {
+      toggleFullscreen()
     }
 
     // window.api.receive("fromMain", (data) => {
     //     console.log(`Received ${data} from main process`);
     // });
 
-    // Check for the File API support
-    if (window.File && window.FileReader && window.FileList && window.Blob) {
-      // Great success! All the File APIs are supported.
+    // TODO Handle various errors, perhaps in the player div itself
+    // Add an event listener for 'error' event
+    // player.on('error', (error) => {
+    //   console.log('testing error:', error)
+    //   // Check the error code
+    //   if (error.code === 4) {
+    //     // Show the error overlay
+    //     errorOverlay.style.display = 'block';
+    //   }
+    // });
 
-      function browseForDirectory() {
-        // Create a file input element
-        var fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.webkitdirectory = true;
-        fileInput.multiple = false;
+    function browseForDirectory() {
+      // Create a file input element
+      var fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.webkitdirectory = true;
+      fileInput.multiple = false;
 
-        // Listen for change events on the file input
-        fileInput.addEventListener('change', function () {
-          // Load the selected directory
-          loadDirectory(fileInput.files);
-        });
+      // Listen for change events on the file input
+      fileInput.addEventListener('change', function () {
+        // Load the selected directory
+        loadDirectory(fileInput.files);
+      });
 
-        // Click the file input to open the directory picker
-        fileInput.click();
+      // Click the file input to open the directory picker
+      fileInput.click();
+    }
+
+    function selectStream(url, title, index) {
+      let truncatedTitle = `Channel ${index}\n${title.substr(0, 25)}`;
+      if (truncatedTitle.length < title.length) {
+        truncatedTitle += '...';
       }
 
-      function selectStream(url, title) {
+      // Update the overlay title
+      document.getElementById("overlay-title").innerHTML = truncatedTitle;
+      // Show the overlay
+      document.getElementById("overlay").style.display = "block";
+      // Hide the overlay after x seconds
+      // setTimeout(function () {
+      //   document.getElementById("overlay").style.display = "none";
+      // }, 30000);
 
+      player.src({
+        src: url,
+        type: 'application/x-mpegURL'
+      });
 
-        let truncatedTitle = title.substr(0, 15);
-        if (truncatedTitle.length < title.length) {
-          truncatedTitle += '...';
-        }
-
-
-        // Update the overlay title
-        document.getElementById("overlay-title").innerHTML = truncatedTitle;
-        // Show the overlay
-        document.getElementById("overlay").style.display = "block";
-        // Hide the overlay after x seconds
-        setTimeout(function () {
-          document.getElementById("overlay").style.display = "none";
-        }, 30000);
-
-        player.src({
-          src: url,
-          type: 'application/x-mpegURL'
-        });
-
-        // Play the selected stream
-        player.play();
-      }
-    } else {
-      // Sorry! No File API support.
-      console.error('The File APIs are not fully supported in this browser.');
+      // Play the selected stream
+      player.play();
     }
 
     // window.api.receive("fromMain", (data) => {
@@ -166,219 +176,12 @@
     // setTimeout(() => {
     //   document.getElementById('streams').classList.add('hide');
     // }, 15000);
-
-    // Check if the Gamepad API is supported
-    if (navigator.getGamepads) {
-      // Gamepad API is supported
-
-      // Start the gamepad loop
-      gamepadLoop();
-
-      // Keep track of the currently selected channel
-      let selectedIndex = 0;
-
-      // Get a reference to the channel list elements
-      let ul = document.getElementById("channel_list-elements");
-      let li = ul.getElementsByTagName('li');
-
-      // Function to navigate up through the channel list
-      function navigateUp() {
-        // Deselect the current channel
-        li[selectedIndex].classList.remove('selected');
-
-        // Decrement the selected index
-        selectedIndex--;
-
-        // If the selected index is negative, wrap around to the end of the list
-        if (selectedIndex < 0) {
-          selectedIndex = li.length - 1;
-        }
-
-        // Select the new channel
-        li[selectedIndex].classList.add('selected');
-      }
-
-      // Function to navigate down through the channel list
-      function navigateDown() {
-        // Deselect the current channel
-        li[selectedIndex].classList.remove('selected');
-
-        // Increment the selected index
-        selectedIndex++;
-
-        // If the selected index is greater than the length of the list, wrap around to the beginning of the list
-        if (selectedIndex >= li.length) {
-          selectedIndex = 0;
-        }
-
-        // Select the new channel
-        li[selectedIndex].classList.add('selected');
-      }
-
-      // Triggers the selected channel
-      function triggerSelected() {
-        // Find the currently highlighted element
-        var listElements = document.getElementsByClassName("channel_list-element");
-        var currentIndex = -1;
-        for (var i = 0; i < listElements.length; i++) {
-          if (listElements[i].classList.contains("highlighted")) {
-            currentIndex = i;
-            break;
-          }
-        }
-
-        // Trigger a click event on the selected element
-        if (currentIndex > -1) {
-          let a = li[currentIndex].getElementsByTagName("a")[selectedIndex];
-
-
-          // Update the overlay title
-          document.getElementById("overlay-title").innerHTML = a.textContent;
-          // Show the overlay
-          document.getElementById("overlay").style.display = "block";
-          // Hide the overlay after x seconds
-          setTimeout(function () {
-            document.getElementById("overlay").style.display = "none";
-          }, 30000);
-
-          // Trigger the click event on the link element
-          a.click();
-        }
-      }
-
-      // Main gamepad loop
-      function gamepadLoop() {
-        // Get the gamepad
-        let gamepad = navigator.getGamepads()[0];
-
-        // Check if the gamepad is connected
-        if (gamepad) {
-          function highlightNextListItem() {
-            // Highlight the previous list item in the channel list
-            // Get a reference to the channel list elements
-            var listElements = document.getElementsByClassName("channel_list-element");
-
-            // Find the currently highlighted element
-            var currentIndex = -1;
-            for (var i = 0; i < listElements.length; i++) {
-              if (listElements[i].classList.contains("highlighted")) {
-                currentIndex = i;
-                break;
-              }
-            }
-
-            // Deselect the current element
-            if (currentIndex > -1) {
-              listElements[currentIndex].classList.remove("highlighted");
-            }
-
-            // Select the next element, or the first element if at the end of the list
-            currentIndex++;
-            if (currentIndex >= listElements.length) {
-              currentIndex = 0;
-            }
-            listElements[currentIndex].classList.add("highlighted");
-
-            // Scroll the list if necessary
-            if (currentIndex > -1) {
-              var element = listElements[currentIndex + 1];
-              var elementRect = element.getBoundingClientRect();
-              var absoluteElementTop = elementRect.top + window.pageYOffset;
-              var middle = absoluteElementTop - (window.innerHeight / 2);
-              var currentPositionOfPage = window.scrollY;
-              document.getElementById("channel_list").scrollTo(0, middle)
-            }
-          }
-
-          function highlightPreviousListItem() {
-            // Get a reference to the channel list elements
-            var listElements = document.getElementsByClassName("channel_list-element");
-
-            // Find the currently highlighted element
-            var currentIndex = -1;
-            for (var i = 0; i < listElements.length; i++) {
-              if (listElements[i].classList.contains("highlighted")) {
-                currentIndex = i;
-                break;
-              }
-            }
-
-            // Deselect the current element
-            if (currentIndex > -1) {
-              listElements[currentIndex].classList.remove("highlighted");
-            }
-
-            // Select the previous element, or the last element if at the beginning of the list
-            currentIndex--;
-            if (currentIndex < 0) {
-              currentIndex = listElements.length - 1;
-            }
-            listElements[currentIndex].classList.add("highlighted");
-
-            // Scroll the list if necessary
-            if (currentIndex > -1) {
-              var element = listElements[currentIndex - 1];
-              var elementRect = element.getBoundingClientRect();
-              var absoluteElementTop = elementRect.top + window.pageYOffset;
-              var middle = absoluteElementTop - (window.innerHeight / 2);
-              window.scrollTo(0, middle);
-            }
-          }
-
-          // Check for D-pad button presses
-          if (gamepad.buttons[12].pressed || gamepad.axes[1] < -0.5) { // Up
-            console.log('testing up');
-
-            highlightPreviousListItem();
-          }
-          if (gamepad.buttons[13].pressed || gamepad.axes[1] > 0.5) { // Down
-            console.log('testing down');
-
-            highlightNextListItem();
-          }
-
-          if (gamepad.buttons[14].pressed || gamepad.axes[0] < -0.5) { // Left
-            // Do nothing
-          }
-          if (gamepad.buttons[15].pressed || gamepad.axes[0] > 0.5) { // Right
-            // Do nothing
-          }
-
-          // Check if the B button is pressed
-          if (gamepad.buttons[1].pressed) {
-            // B button is pressed, call the toggleMenu function
-            toggleMenu();
-          }
-
-          // Check if the D-pad up button is pressed
-          if (gamepad.buttons[12].pressed) {
-            // D-pad up button is pressed, navigate up through the channel list
-            navigateUp();
-          }
-
-          // Check if the D-pad down button is pressed
-          if (gamepad.buttons[13].pressed) {
-            // D-pad down button is pressed, navigate down through the channel list
-            navigateDown();
-          }
-
-          // Check if the X button is pressed
-          if (gamepad.buttons[2].pressed) {
-            // X button is pressed, trigger the selected channel
-            triggerSelected();
-          }
-        }
-
-        // Run the gamepad loop again after a short delay
-        setTimeout(gamepadLoop, 150);
-      }
-    }
   </script>
 
   <script>
-    var portfolio = document.querySelector("#channel_list");
-    var content = document.querySelector(".landing");
-    var portfolioOpen = true;
+    let portfolio = document.querySelector("#channel_list");
+    let content = document.querySelector(".landing");
+    let portfolioOpen = true;
 
     toggleMenu();
 
@@ -399,8 +202,9 @@
       portfolioOpen = false;
       portfolio.style.marginLeft = "-350px";
     }
-  </script>
 
+  </script>
+  <script src="./gamepad.js"></script>
   <script src="./renderer.js"></script>
 </body>
 

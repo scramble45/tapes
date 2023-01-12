@@ -142,7 +142,8 @@ body {
 
 #channel_list {
   width: 350px;
-  height: 96%;
+  /* height: 96%; */
+  height: calc(100% - 1.9em);
   margin-left: 0;
   position: fixed;
   float: left;
@@ -182,22 +183,16 @@ a {
 }
 
 .channel_list-element {
+  text-align: left;
   margin: 18px 0 0 15px;
   font-size: 15px;
   font-weight: 100;
+  font-family: helvetica;
 }
 
 nav {
   z-index: 1;
   float: left;
-}
-
-.channel_list-element {
-  margin: 12px 40px 0 0;
-  float: left;
-  color: black;
-  font-size: 18px;
-  text-decoration: none;
 }
 
 .navigation-icon {
@@ -221,23 +216,52 @@ nav {
   font-size: 18px;
 }
 
-.highlighted {
-  background-color: #00ff4c75;
+.cursor {
+  cursor: pointer;
 }
 
+.highlighted {
+  background-color: rgb(204, 0, 255);
+  padding-top: 20px;
+  height: 35px;
+  border-top: solid;
+  border-bottom: solid;
+  border-left: solid;
+  border-color: rgb(0 255 255 / 70%);
+  font-weight: bold;
+}
 
 @font-face {
   font-family: VCR;
   src: url(./fonts/VCR_OSD_MONO_1.001.ttf);
 }
 
+@font-face {
+  font-family: helvetica;
+  src: url(./fonts/helvetica.ttf)
+}
+
 .overlay {
   position: fixed;
-  top: 10px;
-  right: 10px;
+  height: auto;
+  top: 60px;
+  right: 60px;
   z-index: 1;
   font-family: VCR;
   color: #33f048;
   font-size: 30px;
-  /* other styles go here */
 }
+
+.overlay-title {
+  white-space: pre-wrap;
+}
+
+/* .error-overlay {
+  position: fixed;
+  top: 60px;
+  right: 60px;
+  z-index: 1;
+  font-family: VCR;
+  color: #ff0000;
+  font-size: 16px;
+} */

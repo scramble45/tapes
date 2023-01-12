@@ -46,7 +46,9 @@
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
-          "config": {}
+          "config": {
+            "iconUrl": "./src/icons/win/icon.ico"
+          }
         },
         {
           "name": "@electron-forge/maker-flatpak",
