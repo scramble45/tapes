@@ -10,6 +10,13 @@ console.log('streamDir:', streamDir)
 
 app.console = new console.Console(process.stdout, process.stderr)
 
+// auto update for windows and mac
+require('update-electron-app')({
+  repo: 'scramble45/tapes',
+  updateInterval: '1 hour',
+  logger: require('electron-log')
+})
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
