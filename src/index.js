@@ -27,10 +27,10 @@ const streamDir = `${getAppDataPath()}/streams`
 if (!fs.existsSync(streamDir)) {
   // Make the streams directory if it doesn't exist
   fs.mkdirSync(streamDir, { recursive: true });
+  console.log('created stream directory:', streamDir)
+} else {
+  console.log('found stream directory:', streamDir)
 }
-
-
-console.log('found streamDir:', streamDir)
 
 app.console = new console.Console(process.stdout, process.stderr)
 
@@ -90,7 +90,7 @@ const template = [
         }
       },
       {
-        label: 'Load iptv-org Streams',
+        label: 'Load IPTV-org',
         accelerator: 'CmdOrCtrl+O',
         click: async () => {
           // Open a directory selection dialog
@@ -122,16 +122,16 @@ const template = [
         }
       }
     ]
-  }, {
-    label: 'Edit',
-    submenu: [
-      {
-        label: 'Options',
-        accelerator: 'CmdOrCtrl+E',
-        click: () => {
-        }
-      }
-    ]
+  // }, {
+  //   label: 'Edit',
+  //   submenu: [
+  //     {
+  //       label: 'Options',
+  //       accelerator: 'CmdOrCtrl+E',
+  //       click: () => {
+  //       }
+  //     }
+  //   ]
   }
 ]
 
@@ -246,7 +246,6 @@ async function downloadStreams() {
     })
   });
 }
-
 
 // if the streams folder is already present go ahead and load the content
 if (fs.existsSync(streamDir)) {
