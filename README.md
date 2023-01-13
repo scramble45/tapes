@@ -7,9 +7,9 @@
   - What makes tapes different that other players?
     - Simply put tapes has gamepad support and a better user interface or the start of one.
   - Why electron?
-    - Makes for quick work of bundling and distrubuting apps across a wild varity of platforms, change my mind.
+    - Makes for quick work of bundling and distrubuting apps across a wild variety of platforms, change my mind.
   - Tapes is a small project that gets features added as I have time, although PRs are welcome.
   
   
 ### Downloads
-  - See the releases on this repo.
+  - See the [Releases](https://github.com/scramble45/tapes/releases) on this repo.
