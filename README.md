@@ -1,6 +1,6 @@
 <image src=https://github.com/scramble45/tapes/blob/main/images/tapes.svg>
 
-## tapes a iptv client - be kind rewind
+## an iptv client - be kind rewind
 
 ### What is tapes?
   - Tapes is a IPTV client, it can load a directory full of `.m3u` files containing stream URLs.
