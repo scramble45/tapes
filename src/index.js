@@ -30,9 +30,9 @@ function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
     width: 1275,
-    height: 740,
+    height: 720,
     minWidth: 1275,
-    minHeight: 740,
+    minHeight: 720,
     icon: './src/icons/png/64x64.png',
     autoHideMenuBar: true,
     webPreferences: {

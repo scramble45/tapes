@@ -23,7 +23,7 @@ gameControl
             highlightPreviousListItem()
             scheduledUp = false
           });
-        }, 150);
+        }, 50);
       }
     })
     gamepad.on('down', () => {
@@ -34,7 +34,7 @@ gameControl
             highlightNextListItem()
             scheduledDown = false
           });
-        }, 150);
+        }, 50);
       }
     })
     gamepad.on('left', () => {

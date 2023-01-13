@@ -21,7 +21,7 @@
       <div id="channel_list">
         <div class="channel_list-section">
           <div class="channel_list-heading">
-            <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search...">
+            <input type="text" id="myInput" onkeyup="channels()" placeholder="Search...">
           </div>
           <div class="channel_list-heading-divider"></div>
           <ul id="channel_list-elements" class="channel_list-elements">
@@ -31,7 +31,7 @@
       </div>
     </div>
     <!-- Create a video player -->
-    <video id="player" class="video-js vjs-vaporwave vjs-fill" controls></video>
+    <video id="player" class="video-js vjs-vaporwave vjs-fill" controls ondblclick="toggleFullscreen()"></video>
   </div>
   <title>Tapes</title>
   <!-- Include video.js library -->
@@ -41,7 +41,7 @@
   <script src="./videojs-http-streaming.js"></script>
 
   <script>
-    function myFunction() {
+    function channels() {
       // Declare variables
       var input, filter, ul, li, a, i, txtValue;
       input = document.getElementById('myInput');
@@ -80,12 +80,10 @@
       autoplay: true,
       controls: true,
       inactivityTimeout: 0,
-      // fluid: true,
-      // aspectRatio: '16:9',
       responsive: true,
       fill: true,
       playbackRates: [0.5, 1, 1.5, 2],
-      // poster: './icons/png/1024x1024.png'
+      poster: '../images/tapes.svg'
     });
 
     player.controlBar.fullscreenToggle.dispose() // remove old fullscreen button
@@ -180,10 +178,10 @@
 
   <script>
     let portfolio = document.querySelector("#channel_list");
-    let content = document.querySelector(".landing");
+    let vjsbar = document.querySelector('.vjs-control-bar')
     let portfolioOpen = true;
 
-    toggleMenu();
+    // toggleMenu();
 
     function toggleMenu() {
       if (portfolioOpen == true) {
@@ -195,11 +193,16 @@
 
     function openMenu() {
       portfolioOpen = true;
+      // vjsbar.style.visibility = 'visible';
+      vjsbar.style.transition = 'all .0.75s ease-in-out'
+      vjsbar.style.marginBottom = "0";
       portfolio.style.marginLeft = "0";
     }
 
     function closeMenu() {
       portfolioOpen = false;
+      vjsbar.style.transition = 'all .0.75s ease-in-out'
+      vjsbar.style.marginBottom = "-3em";
       portfolio.style.marginLeft = "-350px";
     }
 
