@@ -25,9 +25,7 @@ module.exports = {
       name: "@electron-forge/maker-flatpak",
       config: {
         options: {
-          categories: [
-            "Multimedia"
-          ],
+          categories: ['Video'],
           icon: {
             "512x512": "./src/icons/png/512x512.png"
           }
