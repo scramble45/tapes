@@ -118,10 +118,10 @@ function highlightPreviousListItem() {
   let listElements = document.getElementsByClassName("channel_list-element");
 
   // Find the currently highlighted element
-  let currentIndex = -1
+  let currentIndex = -1;
   for (let i = 0; i < listElements.length; i++) {
     if (listElements[i].classList.contains("highlighted")) {
-      currentIndex = i
+      currentIndex = i;
       break;
     }
   }
@@ -132,45 +132,26 @@ function highlightPreviousListItem() {
   }
 
   // Select the previous element, or the last element if at the beginning of the list
-  currentIndex--
+  currentIndex--;
   if (currentIndex < 0) {
     currentIndex = listElements.length - 1;
   }
   listElements[currentIndex].classList.add("highlighted");
 
-  // Scroll the list if necessary
-  if (currentIndex > -1) {
-    let element = listElements[currentIndex - 1]
-    if (element) {
-      let elementRect = element.getBoundingClientRect();
-      let absoluteElementTop = elementRect.top + window.pageYOffset;
-      let middle = absoluteElementTop - (window.innerHeight / 2)
-      // if (elementRect.top < 0) {
-      //   document.getElementById("channel_list").scrollTo(0, middle);
-      // }
-      // check if the element is above or below the middle of the viewport
-      if (absoluteElementTop > middle) {
-        // element is above the middle of the viewport
-        document.getElementById("channel_list").scrollTo({ top: element.offsetTop, behavior: 'smooth' })
-      } else {
-        // element is below the middle of the viewport
-        document.getElementById("channel_list").scrollTo({ top: element.offsetTop - (window.innerHeight / 2) + element.offsetHeight, behavior: 'smooth' })
-      }
-    }
-  }
+  // Use scrollIntoView to center the highlighted element
+  listElements[currentIndex].scrollIntoView({ behavior: 'instant', block: 'center' });
 }
 
 function highlightNextListItem() {
-  // Highlight the next list item in the channel list
   // Get a reference to the channel list elements
-  let listElements = document.getElementsByClassName("channel_list-element")
+  let listElements = document.getElementsByClassName("channel_list-element");
 
   // Find the currently highlighted element
-  let currentIndex = -1
+  let currentIndex = -1;
   for (let i = 0; i < listElements.length; i++) {
     if (listElements[i].classList.contains("highlighted")) {
-      currentIndex = i
-      break
+      currentIndex = i;
+      break;
     }
   }
 
@@ -182,28 +163,12 @@ function highlightNextListItem() {
   // Select the next element, or the first element if at the end of the list
   currentIndex++;
   if (currentIndex >= listElements.length) {
-    currentIndex = 0
+    currentIndex = 0;
   }
-  listElements[currentIndex].classList.add("highlighted")
+  listElements[currentIndex].classList.add("highlighted");
 
-  // Scroll the list if necessary
-  if (currentIndex > -1) {
-    let element = listElements[currentIndex]
-    if (element) {
-      let elementRect = element.getBoundingClientRect()
-      let absoluteElementTop = elementRect.top + window.pageYOffset;
-      let middle = absoluteElementTop - (window.innerHeight / 2);
-
-      // check if the element is above or below the middle of the viewport
-      if (absoluteElementTop < middle) {
-        // element is above the middle of the viewport
-        document.getElementById("channel_list").scrollTo({ top: element.offsetTop, behavior: 'smooth' })
-      } else {
-        // element is below the middle of the viewport
-        document.getElementById("channel_list").scrollTo({ top: element.offsetTop - (window.innerHeight / 2) + element.offsetHeight, behavior: 'smooth' })
-      }
-    }
-  }
+  // Use scrollIntoView to center the highlighted element
+  listElements[currentIndex].scrollIntoView({ behavior: 'instant', block: 'center' });
 }
 
 // Triggers the selected channel
