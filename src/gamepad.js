@@ -46,6 +46,7 @@ gameControl
     })
     gamepad.on('select', () => {
       console.log('testing select')
+      Menu.setApplicationMenu(true);
     })
     gamepad.on('l1', () => {
     })

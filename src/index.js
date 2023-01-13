@@ -6,7 +6,7 @@ const cheerio = require('cheerio')
 const https = require('https')
 
 const streamDir = path.join(__dirname, '..', 'streams')
-console.log('streamDir:', streamDir)
+console.log('found streamDir:', streamDir)
 
 app.console = new console.Console(process.stdout, process.stderr)
 
@@ -19,59 +19,12 @@ require('update-electron-app')({
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
-  app.quit();
+  app.quit()
 }
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
-
-function createWindow() {
-  // Create the browser window.
-  const win = new BrowserWindow({
-    width: 1275,
-    height: 720,
-    minWidth: 1275,
-    minHeight: 720,
-    icon: './src/icons/png/64x64.png',
-    autoHideMenuBar: true,
-    webPreferences: {
-      nodeIntegration: false, // is default value after Electron v5
-      contextIsolation: true, // protect against prototype pollution
-      enableRemoteModule: false, // turn off remote
-      preload: path.join(__dirname, 'preload.js')
-    }
-  })
-
-  // and load the index.html of the app.
-  win.loadFile(path.join(__dirname, 'index.html'));
-
-
-  const menu = Menu.buildFromTemplate(template)
-  Menu.setApplicationMenu(menu)
-
-  // Open the DevTools.
-  // win.webContents.openDevTools()
-}
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
-  createWindow()
-  app.on('activate', function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
-  })
-})
-
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') app.quit()
-})
 
 // File menu
 const template = [
@@ -97,7 +50,6 @@ const template = [
                 }
 
                 const allFileData = await readFileContents(directory, files)
-                const win = BrowserWindow.getFocusedWindow() // Get a reference to the current window
 
                 let data = {
                   directory: directory,
@@ -106,8 +58,6 @@ const template = [
 
                 win.webContents.send("fromMain", JSON.stringify(data))
               })
-
-
             }
           }).catch(err => {
             console.log(err)
@@ -131,7 +81,6 @@ const template = [
               }
 
               const allFileData = await readFileContents(directory, files)
-              const win = BrowserWindow.getFocusedWindow() // Get a reference to the current window
 
               let data = {
                 directory: directory,
@@ -157,7 +106,6 @@ const template = [
         label: 'DevTools',
         accelerator: 'CmdOrCtrl+D',
         click: () => {
-          const win = BrowserWindow.getFocusedWindow() // Get a reference to the current window
           win.webContents.toggleDevTools() //Toggle the dev tools for the current window
         }
       },
@@ -165,7 +113,7 @@ const template = [
         label: 'Quit',
         accelerator: 'CmdOrCtrl+Q',
         click: () => {
-          const win = BrowserWindow.getFocusedWindow() // Get a reference to the current window
+          // const win = BrowserWindow.getFocusedWindow() // Get a reference to the current window
           win.close()
         }
       }
@@ -182,6 +130,52 @@ const template = [
     ]
   }
 ]
+
+function createWindow() {
+  // Create the browser window.
+  win = new BrowserWindow({
+    width: 1275,
+    height: 720,
+    minWidth: 1275,
+    minHeight: 720,
+    icon: './src/icons/png/64x64.png',
+    autoHideMenuBar: true,
+    webPreferences: {
+      nodeIntegration: false, // is default value after Electron v5
+      contextIsolation: true, // protect against prototype pollution
+      enableRemoteModule: false, // turn off remote
+      preload: path.join(__dirname, 'preload.js')
+    }
+  })
+
+  // and load the index.html of the app.
+  win.loadFile(path.join(__dirname, 'index.html'));
+
+  // custom menu
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
+}
+
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.whenReady().then(() => {
+  createWindow()
+  app.on('activate', function () {
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+  })
+})
+
+// Quit when all windows are closed, except on macOS. There, it's common
+// for applications and their menu bar to stay active until the user quits
+// explicitly with Cmd + Q.
+app.on('window-all-closed', function () {
+  if (process.platform !== 'darwin') app.quit()
+})
+
+
 
 async function downloadStreams() {
   const streamUrl = 'https://github.com/iptv-org/iptv/tree/master/streams'
@@ -252,7 +246,6 @@ if (fs.existsSync(streamDir)) {
       }
 
       const allFileData = await readFileContents(directory, files)
-      const win = BrowserWindow.getFocusedWindow() // Get a reference to the current window
 
       let data = {
         directory: directory,
