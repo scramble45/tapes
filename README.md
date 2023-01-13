@@ -7,7 +7,9 @@
 ### What is tapes?
   - Tapes is a IPTV client, it can load a directory full of `.m3u` files containing stream URLs.
   - What makes tapes different that other players?
-    - Simply put tapes has gamepad support and a better user interface or the start of one.
+    - It is able to source the latest channels published to: https://github.com/iptv-org/iptv/
+    - Gamepad support (steam deck)
+    - A better user interface or the start of one.
   - Why electron?
     - Makes for quick work of bundling and distrubuting apps across a wild variety of platforms, change my mind.
   - Tapes is a small project that gets features added as I have time, although PRs are welcome.
