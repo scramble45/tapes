@@ -16,6 +16,10 @@
   
 ### Flatpak
   - To be able to use a controller you need to grant udev filesystem permissions using the following command:
+    - For now you will need to make sure you have the following installed for the flatpak to work correctly:
+      ```
+      sudo flatpak install flathub org.freedesktop.Platform/x86_64/19.08 org.freedesktop.Sdk/x86_64/19.08 org.electronjs.Electron2.BaseApp/x86_64/stable -y
+      ```
     - `flatpak override --user --filesystem=/run/udev:ro io.atom.electron.tapes_iptv`
 
 ### Known issues:
