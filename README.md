@@ -1,7 +1,9 @@
-<image src=https://github.com/scramble45/tapes/blob/main/images/tapes.svg>
+<p align="center">
+  <image src=https://github.com/scramble45/tapes/blob/main/images/tapes.svg>
+</p>
+<h1 align="center">an iptv client</h1>
 
-## an iptv client
-
+    
 ### What is tapes?
   - Tapes is a IPTV client, it can load a directory full of `.m3u` files containing stream URLs.
   - What makes tapes different that other players?
