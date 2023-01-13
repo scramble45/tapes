@@ -17,6 +17,9 @@
 ### Flatpak
   - To be able to use a controller you need to grant udev filesystem permissions using the following command:
     - `flatpak override --user --filesystem=/run/udev:ro io.atom.electron.tapes_iptv`
-  
+
+### Known issues:
+  - The menubar is hidden by default, press the `ALT` key to make the menu visible.
+
 ### Downloads
   - See the [Releases](https://github.com/scramble45/tapes/releases) on this repo.
