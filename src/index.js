@@ -8,17 +8,17 @@ const https = require('https')
 function getAppDataPath() {
   switch (process.platform) {
     case "darwin": {
-      return path.join(process.env.HOME, "Library", "Application Support", "tapes_iptv");
+      return path.join(process.env.HOME, "Library", "Application Support", "tapes_iptv")
     }
     case "win32": {
-      return path.join(process.env.APPDATA, "tapes_iptv");
+      return path.join(process.env.APPDATA, "tapes_iptv")
     }
     case "linux": {
-      return path.join(process.env.HOME, ".tapes_iptv");
+      return path.join(process.env.HOME, ".tapes_iptv")
     }
     default: {
-      console.error("unsupported platform!");
-      process.exit(1);
+      console.error("unsupported platform!")
+      process.exit(1)
     }
   }
 }
@@ -26,7 +26,7 @@ const streamDir = `${getAppDataPath()}/streams`
 
 if (!fs.existsSync(streamDir)) {
   // Make the streams directory if it doesn't exist
-  fs.mkdirSync(streamDir, { recursive: true });
+  fs.mkdirSync(streamDir, { recursive: true })
   console.log('created stream directory:', streamDir)
 } else {
   console.log('found stream directory:', streamDir)
@@ -92,11 +92,9 @@ const template = [
       {
         label: 'Load IPTV-org',
         accelerator: 'CmdOrCtrl+O',
-        click: async () => {
+        click: () => {
           // Open a directory selection dialog
-          await downloadStreams().catch(err => {
-            console.error(err)
-          })
+          downloadStreams()
         }
       },
       // {
@@ -122,16 +120,16 @@ const template = [
         }
       }
     ]
-  // }, {
-  //   label: 'Edit',
-  //   submenu: [
-  //     {
-  //       label: 'Options',
-  //       accelerator: 'CmdOrCtrl+E',
-  //       click: () => {
-  //       }
-  //     }
-  //   ]
+    // }, {
+    //   label: 'Edit',
+    //   submenu: [
+    //     {
+    //       label: 'Options',
+    //       accelerator: 'CmdOrCtrl+E',
+    //       click: () => {
+    //       }
+    //     }
+    //   ]
   }
 ]
 
@@ -153,7 +151,7 @@ function createWindow() {
   })
 
   // and load the index.html of the app.
-  win.loadFile(path.join(__dirname, 'index.html'));
+  win.loadFile(path.join(__dirname, 'index.html'))
 
   // custom menu
   const menu = Menu.buildFromTemplate(template)
@@ -182,37 +180,29 @@ app.on('window-all-closed', function () {
 async function downloadStreams() {
   const streamUrl = 'https://github.com/iptv-org/iptv/tree/master/streams'
 
-  if (!fs.existsSync(streamDir)) {
-    // Make the streams directory if it doesn't exist
-    fs.mkdirSync(streamDir, { recursive: true })
-  }
+  https.get(streamUrl, (res) => {
+    let html = ''
 
-  // Scrape the website for the file links
-  return new Promise((resolve, reject) => {
-    https.get(streamUrl, (res) => {
-      let html = ''
+    res.on('data', (chunk) => {
+      html += chunk
+    })
 
-      res.on('data', (chunk) => {
-        html += chunk
+    res.on('end', async () => {
+      const $ = cheerio.load(html)
+      const links = $('a')
+      const streamLinks = links.filter((i, link) => {
+        return $(link).attr('href').endsWith('.m3u')
       })
 
-      res.on('end', () => {
-        // Load the HTML into cheerio
-        const $ = cheerio.load(html)
+      // Array to hold all the promises
+      const promises = []
 
-        // Find all the links on the page
-        const links = $('a')
+      for (let link of streamLinks) {
+        let url = `https://raw.githubusercontent.com${$(link).attr('href')}`
+        url = url.replace(/\/blob\//g, '/')
 
-        // Filter the links to only include ones that end in .m3u
-        const streamLinks = links.filter((i, link) => {
-          return $(link).attr('href').endsWith('.m3u')
-        })
-
-        // Download each stream file
-        streamLinks.each((i, link) => {
-          let url = `https://raw.githubusercontent.com${$(link).attr('href')}`
-          url = url.replace(/\/blob\//g, '/')
-
+        // Create a new promise for each file write operation
+        promises.push(new Promise((resolve, reject) => {
           https.get(url, (res) => {
             let data = ''
             res.on('data', (chunk) => {
@@ -221,52 +211,18 @@ async function downloadStreams() {
             res.on('end', () => {
               // Write the file to the streams directory
               fs.writeFileSync(`${streamDir}/${$(link).text()}`, data)
+              resolve()
             })
           })
-        })
+        }))
+      }
 
-        // Load the preloaded iptv-org streams
-        fs.readdir(streamDir, async (err, files) => {
-          if (err) {
-            reject(err);
-            return;
-          }
-          const allFileData = await readFileContents(streamDir, files);
-          let data = {
-            directory: streamDir,
-            fileData: allFileData
-          }
-          setTimeout(() => {
-            win.webContents.send("fromMain", JSON.stringify(data))
-            resolve();
-          }, 500)
-          
-        });
-      })
+      await Promise.all(promises)
+
+      // Call after all the file write operations are complete
+      readStreamData()
     })
-  });
-}
-
-// if the streams folder is already present go ahead and load the content
-if (fs.existsSync(streamDir)) {
-  fs.readdir(streamDir, async (err, files) => {
-    if (err) {
-      console.error(err)
-      return
-    }
-
-    const allFileData = await readFileContents(streamDir, files)
-
-    let data = {
-      directory: streamDir,
-      fileData: allFileData
-    }
-
-    setTimeout(() => {
-      win.webContents.send("fromMain", JSON.stringify(data))
-    }, 500)
   })
-
 }
 
 // Reads the file contents into a single variable
@@ -276,8 +232,33 @@ async function readFileContents(directory, files) {
 
   const filePromises = filePaths.map(filePath => {
     return fs.promises.readFile(filePath, 'utf8')
-  });
+  })
 
-  const fileContents = await Promise.all(filePromises);
-  return fileContents;
+  const fileContents = await Promise.all(filePromises)
+  return fileContents
 }
+
+// if the streams folder is already present go ahead and load the content
+function readStreamData() {
+  if (fs.existsSync(streamDir)) {
+    fs.readdir(streamDir, async (err, files) => {
+      if (err) {
+        console.error(err)
+        return
+      }
+
+      const allFileData = await readFileContents(streamDir, files)
+
+      let data = {
+        directory: streamDir,
+        fileData: allFileData
+      }
+
+      setTimeout(() => {
+        win.webContents.send("fromMain", JSON.stringify(data))
+      }, 500)
+    })
+  }
+}
+
+readStreamData()
