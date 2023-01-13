@@ -5,7 +5,31 @@ const console = require('console')
 const cheerio = require('cheerio')
 const https = require('https')
 
-const streamDir = path.join(__dirname, '..', 'streams')
+function getAppDataPath() {
+  switch (process.platform) {
+    case "darwin": {
+      return path.join(process.env.HOME, "Library", "Application Support", "tapes_iptv");
+    }
+    case "win32": {
+      return path.join(process.env.APPDATA, "tapes_iptv");
+    }
+    case "linux": {
+      return path.join(process.env.HOME, ".tapes_iptv");
+    }
+    default: {
+      console.error("unsupported platform!");
+      process.exit(1);
+    }
+  }
+}
+const streamDir = `${getAppDataPath()}/streams`
+
+if (!fs.existsSync(streamDir)) {
+  // Make the streams directory if it doesn't exist
+  fs.mkdirSync(streamDir, { recursive: true });
+}
+
+
 console.log('found streamDir:', streamDir)
 
 app.console = new console.Console(process.stdout, process.stderr)
@@ -70,28 +94,8 @@ const template = [
         accelerator: 'CmdOrCtrl+O',
         click: async () => {
           // Open a directory selection dialog
-          await downloadStreams().then(() => {
-            // Load preloaded iptv-org streams
-            const directory = streamDir
-
-            fs.readdir(directory, async (err, files) => {
-              if (err) {
-                console.error(err)
-                return
-              }
-
-              const allFileData = await readFileContents(directory, files)
-
-              let data = {
-                directory: directory,
-                fileData: allFileData
-              }
-
-              win.webContents.send("fromMain", JSON.stringify(data))
-
-            })
-          }).catch(err => {
-            console.log(err)
+          await downloadStreams().catch(err => {
+            console.error(err)
           })
         }
       },
@@ -156,10 +160,6 @@ function createWindow() {
   Menu.setApplicationMenu(menu)
 }
 
-
-
-
-
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -179,18 +179,15 @@ app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
 
-
 async function downloadStreams() {
   const streamUrl = 'https://github.com/iptv-org/iptv/tree/master/streams'
 
   if (!fs.existsSync(streamDir)) {
     // Make the streams directory if it doesn't exist
-    fs.mkdirSync(streamDir)
+    fs.mkdirSync(streamDir, { recursive: true })
   }
 
   // Scrape the website for the file links
-  // either this or put a full blown git client into
-  // the application, I opted for scraping for now
   return new Promise((resolve, reject) => {
     https.get(streamUrl, (res) => {
       let html = ''
@@ -227,39 +224,50 @@ async function downloadStreams() {
             })
           })
         })
-        resolve()
+
+        // Load the preloaded iptv-org streams
+        fs.readdir(streamDir, async (err, files) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          const allFileData = await readFileContents(streamDir, files);
+          let data = {
+            directory: streamDir,
+            fileData: allFileData
+          }
+          setTimeout(() => {
+            win.webContents.send("fromMain", JSON.stringify(data))
+            resolve();
+          }, 500)
+          
+        });
       })
     })
-  })
+  });
 }
+
 
 // if the streams folder is already present go ahead and load the content
 if (fs.existsSync(streamDir)) {
-  const directory = streamDir
+  fs.readdir(streamDir, async (err, files) => {
+    if (err) {
+      console.error(err)
+      return
+    }
 
-  function isEmpty(path) {
-    return fs.readdirSync(path).length === 0;
-  }
+    const allFileData = await readFileContents(streamDir, files)
 
-  if (!isEmpty(streamDir)) {
-    fs.readdir(directory, async (err, files) => {
-      if (err) {
-        console.error(err)
-        return
-      }
+    let data = {
+      directory: streamDir,
+      fileData: allFileData
+    }
 
-      const allFileData = await readFileContents(directory, files)
+    setTimeout(() => {
+      win.webContents.send("fromMain", JSON.stringify(data))
+    }, 500)
+  })
 
-      let data = {
-        directory: directory,
-        fileData: allFileData
-      }
-
-      setTimeout(() => {
-        win.webContents.send("fromMain", JSON.stringify(data))
-      }, 500)
-    })
-  }
 }
 
 // Reads the file contents into a single variable
@@ -267,10 +275,10 @@ async function readFileContents(directory, files) {
   // Create an array of file paths
   const filePaths = files.map(file => path.join(directory, file))
 
-  let fileContents = ''
-  for (const filePath of filePaths) {
-    const fileData = await fs.promises.readFile(filePath, 'utf8')
-    fileContents += fileData
-  }
-  return fileContents
+  const filePromises = filePaths.map(filePath => {
+    return fs.promises.readFile(filePath, 'utf8')
+  });
+
+  const fileContents = await Promise.all(filePromises);
+  return fileContents;
 }
