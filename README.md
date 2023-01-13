@@ -14,6 +14,9 @@
     - Makes for quick work of bundling and distrubuting apps across a wild variety of platforms, change my mind.
   - Tapes is a small project that gets features added as I have time, although PRs are welcome.
   
+### Flatpak
+  - To be able to use a controller you need to grant udev filesystem permissions using the following command:
+    - `flatpak override --user --filesystem=/run/udev:ro io.atom.electron.tapes_iptv`
   
 ### Downloads
   - See the [Releases](https://github.com/scramble45/tapes/releases) on this repo.
